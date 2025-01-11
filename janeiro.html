@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Finanças por Mês</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilos para organizar o layout */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .financial-info {
+            flex: 1;
+        }
+
+        .chart-container {
+            width: 300px;
+            height: 200px;
+        }
+
+        .input-group {
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            margin: 5px 0;
+        }
+
+        .transaction-item button {
+            margin-left: 10px;
+        }
+
+        .transaction-item input[type="checkbox"] {
+            margin-left: 10px;
+        }
+
+        /* Estilos para o botão de colapso */
+        .collapse-container {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .collapse-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .collapse-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilo geral para o botão */
+        .botao-mes {
+            display: inline-block;
+            background-color: #4CAF50;
+            /* Cor de fundo */
+            color: white;
+            /* Cor do texto */
+            padding: 10px 20px;
+            /* Espaçamento interno */
+            text-align: center;
+            /* Alinhar o texto no centro */
+            text-decoration: none;
+            /* Remover o sublinhado */
+            border-radius: 5px;
+            /* Bordas arredondadas */
+            font-size: 16px;
+            /* Tamanho da fonte */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Efeitos de transição */
+        }
+
+        /* Efeito de hover (passar o mouse em cima) */
+        .botao-mes:hover {
+            background-color: #45a049;
+            /* Cor de fundo ao passar o mouse */
+            transform: translateY(-3px);
+            /* Efeito de levantar o botão */
+        }
+
+        /* Efeito ao pressionar o botão */
+        .botao-mes:active {
+            background-color: #388e3c;
+            /* Cor de fundo ao pressionar */
+            transform: translateY(2px);
+            /* Efeito de "pressionar" */
+        }
+
+        /* Estilo para dispositivos móveis */
+        @media (max-width: 768px) {
+            .botao-mes {
+                padding: 8px 16px;
+                /* Ajuste o padding em telas menores */
+                font-size: 14px;
+                /* Ajuste o tamanho da fonte em telas menores */
+            }
+        }
+
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Corpo e estrutura geral */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Cabeçalho */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+
+        /* Container principal */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Caixa de informações financeiras */
+        .financial-info {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .financial-info .balance,
+        .financial-info .expenses {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* Botão de colapso */
+        .collapse-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 50%;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .collapse-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Contêiner de colapso para a Renda Inicial */
+        .collapse-container {
+            margin-top: 10px;
+            display: none;
+            /* Inicialmente escondido */
+        }
+
+        /* Campos de Renda Inicial */
+        .initial-income {
+            margin-bottom: 15px;
+        }
+
+        .initial-income label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .initial-income input {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .initial-income button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+        .initial-income button:hover {
+            background-color: #45a049;
+        }
+
+        /* Display de Renda Inicial */
+        #initial-income-display {
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Campos de Transações */
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .input-group button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .input-group button:hover {
+            background-color: #45a049;
+        }
+
+        /* Gráfico */
+        .chart-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #financeChart {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .input-group {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .financial-info {
+                padding: 15px;
+            }
+
+            .collapse-button,
+            .initial-income button,
+            .input-group button {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .initial-income input,
+            .input-group input,
+            .input-group select {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            #financeChart {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .financial-info {
+                padding: 10px;
+            }
+
+            .collapse-button,
+            .initial-income button,
+            .input-group button {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .initial-income input,
+            .input-group input,
+            .input-group select {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            #financeChart {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Gerenciador de Finanças Mês Janeiro</h1>
+    </div>
+    <a class="botao-mes" id="voltar" href="index.html" name="voltar">voltar</a>
+
+    <div class="container">
+        <div class="financial-info">
+            <button class="collapse-button" onclick="toggleCollapse()">Definir Renda Inicial</button>
+            <div class="collapse-container" id="collapse-container">
+                <div class="initial-income">
+                    <label for="initial-income">Renda Inicial: R$</label>
+                    <input type="number" id="initial-income" placeholder="Digite sua renda inicial" />
+                    <button onclick="setInitialIncome()">Confirme Sua Renda</button>
+                    <div id="initial-income-display">Renda Inicial: R$ 0,00</div>
+                </div>
+            </div>
+
+            <div class="balance">Saldo Atual: R$ <span id="balance">0,00</span></div><br>
+
+            <div class="transactions" id="transactions"></div>
+
+            <div class="input-group">
+                <input type="text" id="description" placeholder="Descrição">
+                <input type="number" id="amount" placeholder="Valor">
+                <input type="date" id="payment-date">
+                <select id="type">
+                    <option value="expense">despesa</option>
+                    <option value="income">receita</option>
+                </select>
+                <button onclick="addTransaction()">Adicionar</button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="financeChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const month = 'janeiro';
+        let transactions = JSON.parse(localStorage.getItem(`transactions_${month}`)) || [];
+        const balanceElement = document.getElementById('balance');
+        const transactionsElement = document.getElementById('transactions');
+        const financeChartElement = document.getElementById('financeChart').getContext('2d');
+        let financeChart;
+        let initialIncome = parseFloat(localStorage.getItem(`initialIncome_${month}`)) || 0;
+        let editingIndex = null;
+
+        function setInitialIncome() {
+            const income = parseFloat(document.getElementById('initial-income').value);
+            if (!isNaN(income) && income > 0) {
+                initialIncome = income;
+                localStorage.setItem(`initialIncome_${month}`, initialIncome);
+                updateUI();
+            } else {
+                alert('Por favor, insira um valor válido para a renda inicial.');
+            }
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem(`transactions_${month}`, JSON.stringify(transactions));
+        }
+
+        function formatarDataBrasil(data) {
+            const opcoes = {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            };
+
+            const dataFormatada = new Date(data).toLocaleDateString('pt-BR', opcoes);
+            return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1); // Capitaliza a primeira letra do mês
+        }
+
+
+        function updateUI() {
+            transactionsElement.innerHTML = '';
+            let balance = initialIncome;
+            let incomes = initialIncome;
+            let expenses = 0;
+
+            transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            transactions.forEach((transaction, index) => {
+                const transactionElement = document.createElement('div');
+                transactionElement.classList.add('transaction-item');
+                transactionElement.innerHTML = ` 
+                    ${transaction.description} - ${transaction.type === 'income' ? 'Receita' : 'Despesa'} - R$ ${transaction.amount.toFixed(2)} 
+                    - Data: ${transaction.date} 
+                    <button onclick="removeTransaction(${index})">Remover</button>
+                    <button onclick="editTransaction(${index})">Editar</button>
+                    <label>
+                        Pago
+                        <input type="checkbox" ${transaction.paid ? 'checked' : ''} onclick="togglePaymentStatus(${index})">
+                    </label>
+                `;
+                transactionsElement.appendChild(transactionElement);
+
+                if (transaction.type === 'income') {
+                    incomes += transaction.amount;
+                    balance += transaction.amount;
+                } else {
+                    expenses += transaction.amount;
+                    balance -= transaction.amount;
+                }
+            });
+
+            balanceElement.textContent = balance.toFixed(2);
+            balanceElement.style.color = balance < 0 ? 'red' : 'black';
+
+            updateChart(incomes, expenses, balance);
+            updateInitialIncomeDisplay();
+        }
+
+        function updateInitialIncomeDisplay() {
+            document.getElementById('initial-income-display').textContent = `Renda Inicial: R$ ${initialIncome.toFixed(2)}`;
+        }
+
+        function addTransaction() {
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const date = document.getElementById('payment-date').value;
+            const type = document.getElementById('type').value;
+
+            if (!description || !amount || !date) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const newTransaction = {
+                description,
+                amount,
+                date,
+                type,
+                paid: false
+            };
+
+            if (editingIndex !== null) {
+                transactions[editingIndex] = newTransaction;
+                editingIndex = null;
+            } else {
+                transactions.push(newTransaction);
+            }
+
+            updateLocalStorage();
+            updateUI();
+
+            // Limpa os campos após adicionar a transação
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('payment-date').value = '';
+            document.getElementById('type').value = 'expense';
+        }
+
+        function removeTransaction(index) {
+            transactions.splice(index, 1);
+            updateLocalStorage();
+            updateUI();
+        }
+
+        function editTransaction(index) {
+            const transaction = transactions[index];
+            document.getElementById('description').value = transaction.description;
+            document.getElementById('amount').value = transaction.amount;
+            document.getElementById('payment-date').value = transaction.date;
+            document.getElementById('type').value = transaction.type;
+            editingIndex = index;
+        }
+
+        function updateChart(incomes, expenses, balance) {
+            if (financeChart) {
+                financeChart.destroy();
+            }
+
+            financeChart = new Chart(financeChartElement, {
+                type: 'bar',
+                data: {
+                    labels: ['Receitas', 'Despesas', 'Saldo'],
+                    datasets: [{
+                        label: 'Valores',
+                        data: [incomes, expenses, balance],
+                        backgroundColor: ['green', 'red', 'blue'],
+                        borderColor: ['darkgreen', 'darkred', 'darkblue'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function togglePaymentStatus(index) {
+            transactions[index].paid = !transactions[index].paid;
+            updateLocalStorage();
+            updateUI();
+        }
+
+        function toggleCollapse() {
+            const collapseContainer = document.getElementById('collapse-container');
+            collapseContainer.style.display = collapseContainer.style.display === 'block' ? 'none' : 'block';
+        }
+
+        updateUI();
+    </script>
+</body>
+
+</html>

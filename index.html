@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meses do Ano</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1313af;
+        }
+
+        .meses-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* 3 colunas */
+            grid-gap: 10px;
+            width: 320px;
+            padding: 20px;
+            background-color: rgb(14, 14, 10);
+            /* Cor de fundo amarela */
+            border-radius: 10px;
+            /* Bordas arredondadas */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra para destacar */
+        }
+
+        .botao-mes {
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* Remove a linha de contorno (underline) */
+        }
+
+        .botao-mes:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="meses-container">
+        <a class="botao-mes" id="janeiro" href="janeiro.html" name="janeiro">Janeiro</a>
+        <a class="botao-mes" id="fevereiro" href="fevereiro.html" name="fevereiro">Fevereiro</a>
+        <a class="botao-mes" id="marco" href="marco.html" name="marco">Março</a>
+        <a class="botao-mes" id="abril" href="abril.html" name="abril">Abril</a>
+        <a class="botao-mes" id="maio" href="maio.html" name="maio">Maio</a>
+        <a class="botao-mes" id="junho" href="junho.html" name="junho">Junho</a>
+        <a class="botao-mes" id="julho" href="julho.html" name="julho">Julho</a>
+        <a class="botao-mes" id="agosto" href="agosto.html" name="agosto">Agosto</a>
+        <a class="botao-mes" id="setembro" href="setembro.html" name="setembro">Setembro</a>
+        <a class="botao-mes" id="outubro" href="outubro.html" name="outubro">Outubro</a>
+        <a class="botao-mes" id="novembro" href="novembro.html" name="novembro">Novembro</a>
+        <a class="botao-mes" id="dezembro" href="dezembro.html" name="dezembro">Dezembro</a>
+    </div>
+
+</body>
+
+</html>
